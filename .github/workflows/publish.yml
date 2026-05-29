@@ -1,0 +1,67 @@
+name: Publish NuGet
+
+# When a push lands on main (e.g. a merged PR), build + test, then push the
+# package to nuget.org. The version is generated as YYYY.MM.DD.<buildnumber>,
+# so every merge produces a unique version automatically — no manual bump.
+# --skip-duplicate keeps re-runs from failing if a version already exists.
+#
+# Requires repo secret NUGET_API_KEY (a nuget.org API key scoped to
+# Omnicasa.Mobile.iOSActivityKit). Package page:
+# https://www.nuget.org/packages/Omnicasa.Mobile.iOSActivityKit
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET (from global.json)
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Install workloads (ios)
+        run: dotnet workload restore src/iOSActivityKit/iOSActivityKit.csproj
+
+      # Version scheme: YYYY.MM.DD.<buildnumber> (e.g. 2026.5.29.42), matching
+      # the Omnicasa.Analyzers convention. github.run_number is the build number.
+      - name: Compute version
+        id: version
+        run: echo "value=$(date -u +'%Y.%-m.%-d').${{ github.run_number }}" >> "$GITHUB_OUTPUT"
+
+      - name: Restore
+        run: dotnet restore
+
+      # Gate the release on a clean build (warnings-as-errors) + green tests.
+      - name: Build (Release)
+        run: dotnet build -c Release --no-restore
+
+      - name: Test
+        run: >-
+          dotnet test tests/iOSActivityKit.Tests/iOSActivityKit.Tests.csproj
+          -c Release --no-build --verbosity normal
+
+      - name: Pack
+        run: >-
+          dotnet pack src/iOSActivityKit/iOSActivityKit.csproj
+          -c Release -p:Version=${{ steps.version.outputs.value }}
+          -o ${{ runner.temp }}/artifacts
+
+      - name: Push to nuget.org
+        run: >-
+          dotnet nuget push "${{ runner.temp }}/artifacts/*.nupkg"
+          --api-key "${{ secrets.NUGET_API_KEY }}"
+          --source https://api.nuget.org/v3/index.json
+          --skip-duplicate

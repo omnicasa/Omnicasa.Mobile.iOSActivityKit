@@ -11,7 +11,8 @@
 
     <!-- NuGet package metadata -->
     <PackageId>Omnicasa.Mobile.iOSActivityKit</PackageId>
-    <Version>1.0.0</Version>
+    <!-- Local/dev fallback. CI publishes with -p:Version=YYYY.MM.DD.<buildnumber>. -->
+    <Version>0.0.1-dev</Version>
     <Authors>Omnicasa</Authors>
     <Title>Omnicasa.Mobile.iOSActivityKit for .NET MAUI</Title>
     <Description>Drive iOS ActivityKit Live Activities and the Dynamic Island from .NET MAUI / .NET for iOS. Generic key-value state means one prebuilt native bridge works for any app — you only write your widget's SwiftUI. Safe no-op on non-iOS platforms.</Description>

@@ -1,0 +1,42 @@
+name: CI
+
+# Build + test every PR targeting main (and on demand).
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-test:
+    # net9.0-ios requires the iOS workload + Xcode, which only exist on macOS.
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET (from global.json)
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Install workloads (ios)
+        run: dotnet workload restore src/iOSActivityKit/iOSActivityKit.csproj
+
+      - name: Restore
+        run: dotnet restore
+
+      # TreatWarningsAsErrors + Omnicasa.Analyzers are enforced here.
+      - name: Build (Release)
+        run: dotnet build -c Release --no-restore
+
+      - name: Test
+        run: >-
+          dotnet test tests/iOSActivityKit.Tests/iOSActivityKit.Tests.csproj
+          -c Release --no-build --verbosity normal
