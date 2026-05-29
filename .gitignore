@@ -60,3 +60,12 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+# .NET
+**/bin/
+**/obj/
+/artifacts/
+*.user
+
+# Native bridge transient build (the prebuilt output/ xcframework IS committed)
+native/bridge/build/

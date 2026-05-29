@@ -1,0 +1,47 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net9.0;net9.0-ios</TargetFrameworks>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>latest</LangVersion>
+    <IsTrimmable>true</IsTrimmable>
+
+    <SupportedOSPlatformVersion Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) == 'ios'">15.0</SupportedOSPlatformVersion>
+
+    <!-- NuGet package metadata -->
+    <PackageId>Omnicasa.Mobile.iOSActivityKit</PackageId>
+    <Version>1.0.0</Version>
+    <Authors>Omnicasa</Authors>
+    <Title>Omnicasa.Mobile.iOSActivityKit for .NET MAUI</Title>
+    <Description>Drive iOS ActivityKit Live Activities and the Dynamic Island from .NET MAUI / .NET for iOS. Generic key-value state means one prebuilt native bridge works for any app — you only write your widget's SwiftUI. Safe no-op on non-iOS platforms.</Description>
+    <PackageTags>maui;ios;activitykit;live-activity;dynamic-island;widget;lockscreen</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/omnicasa/Omnicasa.Mobile.iOSActivityKit</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/omnicasa/Omnicasa.Mobile.iOSActivityKit</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="iOSActivityKit.Tests" />
+  </ItemGroup>
+
+  <!-- iOS-specific sources are compiled only for the iOS target framework. -->
+  <ItemGroup Condition="$([MSBuild]::GetTargetPlatformIdentifier('$(TargetFramework)')) != 'ios'">
+    <Compile Remove="Platforms/**/*.cs" />
+  </ItemGroup>
+
+  <!-- Pack the repo README as the NuGet readme. -->
+  <ItemGroup>
+    <None Include="../../README.md" Pack="true" PackagePath="\" Visible="false" />
+  </ItemGroup>
+
+</Project>
