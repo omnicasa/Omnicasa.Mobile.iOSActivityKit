@@ -1,5 +1,10 @@
 # iOSActivityKit
 
+[![CI](https://github.com/omnicasa/Omnicasa.Mobile.iOSActivityKit/actions/workflows/ci.yml/badge.svg)](https://github.com/omnicasa/Omnicasa.Mobile.iOSActivityKit/actions/workflows/ci.yml)
+[![NuGet](https://img.shields.io/nuget/v/Omnicasa.Mobile.iOSActivityKit.svg?logo=nuget)](https://www.nuget.org/packages/Omnicasa.Mobile.iOSActivityKit)
+[![NuGet downloads](https://img.shields.io/nuget/dt/Omnicasa.Mobile.iOSActivityKit.svg)](https://www.nuget.org/packages/Omnicasa.Mobile.iOSActivityKit)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Use iOS **ActivityKit Live Activities** and the **Dynamic Island** from a
 **.NET MAUI / .NET for iOS** app — something the MAUI/.NET-iOS SDK doesn't
 support out of the box.
